@@ -1,8 +1,8 @@
-﻿# Variables used below
-$subscriptionId = "<Your Azure Subscription Id>"
-$tenantId = "<Your Azure AD Tenant Id>"
-$splunkResourceGroupName = "<Resource group name>"
-$splunkResourceGroupLocation = "<Resource group location>"
+# Variables used below
+$subscriptionId = "665481d2-8fbd-4cf1-baa3-42b738fb9ce6"
+$tenantId = "50f6071f-bbfe-401a-8803-673748e629e2"
+$splunkResourceGroupName = "nhsd-amidodev-3-uksouth-acs"
+$splunkResourceGroupLocation = "uksouth"
 # Note: The resource group name can be a new or existing resource group.
 
 #################################################################
@@ -71,7 +71,7 @@ if ($roleAssignment -eq $null) {
 }
 
 # Give the service principal permissions to retrieve secrets from the key vault
-Write-Host "Assigning key vault 'read' permissions to secrets for service principal '$($azureADSP.DisplayName)'" -ForegroundColor Yellow 
+Write-Host "Assigning key vault 'read' permissions to secrets for service principal '$($azureADSP.DisplayName)'" -ForegroundColor Yellow
 Set-AzureRmKeyVaultAccessPolicy -ResourceGroupName $keyVault.ResourceGroupName -VaultName $keyVault.VaultName `
     -PermissionsToSecrets "get" -ObjectId $azureADSP.Id
 
@@ -88,17 +88,17 @@ Write-Host "Configuring Azure Monitor Activity Log to export to event hub '$even
 $logProfileName = "default"
 $locations = (Get-AzureRmLocation).Location
 $locations += "global"
-$serviceBusRuleId = "/subscriptions/$subscriptionId/resourceGroups/$splunkResourceGroupName" + ` 
+$serviceBusRuleId = "/subscriptions/$subscriptionId/resourceGroups/$splunkResourceGroupName" + `
                     "/providers/Microsoft.EventHub/namespaces/$eventHubNamespaceName" + `
                     "/authorizationrules/RootManageSharedAccessKey"
 Remove-AzureRmLogProfile -Name $logProfileName -ErrorAction SilentlyContinue
-Add-AzureRmLogProfile -Name $logProfileName -Location $locations -ServiceBusRuleId $serviceBusRuleId 
+Add-AzureRmLogProfile -Name $logProfileName -Location $locations -ServiceBusRuleId $serviceBusRuleId
 
 Write-Host "Azure configuration completed successfully!" -ForegroundColor Green
 
 # Configure Splunk
 # Settings needed to configure Splunk
-$transcriptPath = "$PSScriptRoot\$splunkResourceGroupName" + ".azureconfig" 
+$transcriptPath = "$PSScriptRoot\$splunkResourceGroupName" + ".azureconfig"
 Start-Transcript -Path $transcriptPath -Append -Force
 
 Write-Host ""
@@ -143,5 +143,3 @@ Write-Host "  secretVersion      " $restAPICredentialsSecret.Version
 Write-Host ""
 
 Stop-Transcript
-
-
